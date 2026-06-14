@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+venv/
+env/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Datos y vídeos (demasiado grandes)
+data/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Modelos YOLO entrenados
+runs/
+*.pt
+*.onnx
+*.engine
+
+# Prototipos y calibración (específicos de cada partido/campo)
+*.pkl
+*.npy
+
+# Imágenes de debug y diagnóstico
+debug_*.png
+diag_*.png
+nb_extract_*.png
+
+# Archivos temporales
+*.csv
+tiempos_partido.json
+rows_cache.pkl
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
