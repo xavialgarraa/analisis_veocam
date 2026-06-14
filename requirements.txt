@@ -1,22 +1,31 @@
 # Visión artificial y detección
-ultralytics>=8.3.0
-opencv-python>=4.6.0
-numpy>=1.23.0
+ultralytics>=8.4.0
+opencv-python>=4.10.0
+numpy>=1.24.0
+
+# Torch — instala la versión con CUDA si tienes GPU:
+# pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+# Si no tienes GPU (CPU only):
+torch>=2.0.0
+torchvision>=0.15.0
 
 # Tracking y optimización
-scipy>=1.9.0
-torch>=2.0.0
+scipy>=1.10.0
 
 # Análisis y visualización
-pandas>=1.5.0
-matplotlib>=3.6.0
-seaborn>=0.12.0
+pandas>=2.0.0
+matplotlib>=3.7.0
+seaborn>=0.13.0
+pillow>=10.0.0
+plotly>=5.0.0
+pyarrow>=14.0.0
 
-# Dashboard
+# Dashboard Streamlit
 streamlit>=1.28.0
+watchdog>=4.0.0
 
-# IA narrativa (opcional — necesita API key de Anthropic)
-anthropic>=0.20.0
+# IA narrativa (opcional — requiere ANTHROPIC_API_KEY)
+anthropic>=0.50.0
 
 # Dataset Roboflow (opcional — solo para descargar el dataset)
 roboflow>=1.1.0
