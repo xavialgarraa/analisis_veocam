@@ -101,7 +101,7 @@ Guarda `tiempos_partido.json` que la app usa automáticamente para recortar el p
 
 ## Entrenar tu propio detector
 
-El detector está basado en YOLOv8. Los datasets de entrenamiento están disponibles en Roboflow:
+El detector está basado en YOLO26. Los datasets de entrenamiento están disponibles en Roboflow:
 
 - **Dataset de jugadores** (vídeo estándar VEO): [analisis-tactico-futbol](https://universe.roboflow.com/javiers-workspace-osouu/analisis-tactico-futbol)
 - **Dataset panorámico** (frames corregidos): [panoramic-cam](https://universe.roboflow.com/javiers-workspace-osouu/panoramic-cam)
