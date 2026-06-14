@@ -34,6 +34,28 @@ pip install -r requirements.txt
 
 ---
 
+## Descargar vídeos VEO
+
+Los vídeos se descargan con [`yt-dlp`](https://github.com/yt-dlp/yt-dlp). Instálalo con `pip install yt-dlp`.
+
+### Vídeo panorámico (recomendado para este pipeline)
+
+El formato panorámico solo está disponible durante los **90 días siguientes** a la grabación del partido.
+
+```bash
+yt-dlp -f panoramico-2048p -o "data/videos/partido.mp4" "https://app.veo.co/matches/ID-DEL-PARTIDO/"
+```
+
+### Vídeo estándar (siempre disponible)
+
+```bash
+yt-dlp -f best -o "data/videos/partido_std.mp4" "https://app.veo.co/matches/ID-DEL-PARTIDO/"
+```
+
+> Sustituye la URL por la del partido en cuestión. Necesitas tener acceso al partido en tu cuenta VEO.
+
+---
+
 ## Uso rápido
 
 ### 1. Calibrar la homografía

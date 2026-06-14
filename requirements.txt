@@ -29,3 +29,6 @@ anthropic>=0.50.0
 
 # Dataset Roboflow (opcional — solo para descargar el dataset)
 roboflow>=1.1.0
+
+# Descarga de vídeos VEO
+yt-dlp>=2024.1.0
