@@ -49,7 +49,7 @@ yt-dlp -f panoramico-2048p -o "data/videos/partido.mp4" "https://app.veo.co/matc
 ### Vídeo estándar (siempre disponible)
 
 ```bash
-yt-dlp -f best -o "data/videos/partido_std.mp4" "https://app.veo.co/matches/ID-DEL-PARTIDO/"
+yt-dlp -f standard-1080p -o "data/videos/partido_std.mp4" "https://app.veo.co/matches/ID-DEL-PARTIDO/"
 ```
 
 > Sustituye la URL por la del partido en cuestión. Necesitas tener acceso al partido en tu cuenta VEO.
