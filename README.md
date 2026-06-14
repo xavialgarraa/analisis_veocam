@@ -160,7 +160,7 @@ Corrección elástica del codec VEO
 Undistorsión racional (8 coeficientes, extraídos del shader GLSL)
         │
         ▼
-Detección YOLOv8 en cada semi-frame (cam A y cam B)
+Detección YOLO26 en cada semi-frame (cam A y cam B)
         │
         ▼
 Proyección a coordenadas métricas del campo (homografía)
