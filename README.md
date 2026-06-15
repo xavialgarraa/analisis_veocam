@@ -17,11 +17,12 @@ Trabajo de Fin de Grado — Xavier Algarra Pérez, Escuela de Ingeniería, 2026.
 7. [Paso 3 — Generar prototipos de color](#paso-3--generar-prototipos-de-color)
 8. [Paso 4 — Dashboard y procesado](#paso-4--dashboard-y-procesado)
 9. [Adaptación a campos de distintas dimensiones](#adaptación-a-campos-de-distintas-dimensiones)
-10. [Entrenar el detector YOLO](#entrenar-el-detector-yolo)
-11. [Modelos incluidos y disponibles](#modelos-incluidos-y-disponibles)
-12. [Notebooks de análisis y diagnóstico](#notebooks-de-análisis-y-diagnóstico)
-13. [Referencia de argumentos por script](#referencia-de-argumentos-por-script)
-14. [Cómo funciona (arquitectura interna)](#cómo-funciona-arquitectura-interna)
+10. [Datos de ejemplo — Banyoles vs Can Gibert](#datos-de-ejemplo--banyoles-vs-can-gibert)
+11. [Entrenar el detector YOLO](#entrenar-el-detector-yolo)
+12. [Modelos incluidos y disponibles](#modelos-incluidos-y-disponibles)
+13. [Notebooks de análisis y diagnóstico](#notebooks-de-análisis-y-diagnóstico)
+14. [Referencia de argumentos por script](#referencia-de-argumentos-por-script)
+15. [Cómo funciona (arquitectura interna)](#cómo-funciona-arquitectura-interna)
 
 ---
 
@@ -75,9 +76,16 @@ SAM2 mejora la calidad de los prototipos de color al aislar la silueta del jugad
 ├── homografia_interactiva.py # Herramienta de calibración manual de homografía
 ├── generar_prototipos_v3.py  # Generación semi-manual de prototipos de color por equipo
 ├── marcar_tiempos.py         # Herramienta para marcar inicio/fin de cada tiempo
-├── finetune_players_panoramic.py  # Fine-tuning del detector YOLO
+├── train_yolo.py             # Entrenamiento inicial YOLO26 desde pesos COCO
+├── finetune_players_panoramic.py  # Fine-tuning sobre dataset panorámico VEO
 ├── prepare_dataset.py        # Descarga y prepara el dataset desde Roboflow
 ├── requirements.txt
+├── data/
+│   └── example_banyoles/     # Ejemplo listo para usar (partido Banyoles vs Can Gibert)
+│       ├── H_camA.npy        # Homografía cámara izquierda
+│       ├── H_camB.npy        # Homografía cámara derecha
+│       ├── prototypes_day.pkl   # Prototipos de color — condiciones de día
+│       └── prototypes_night.pkl # Prototipos de color — condiciones de noche
 ├── runs/
 │   └── detect/
 │       └── modelo_ball_v33/weights/best.pt   # modelo de balón incluido (20 MB)
@@ -466,6 +474,30 @@ core.process_segment(vid_pan, vid_std, H_a, H_b, protos_day, None, config, ...)
 
 ---
 
+## Datos de ejemplo — Banyoles vs Can Gibert
+
+El directorio `data/example_banyoles/` contiene los archivos necesarios para ejecutar el pipeline sobre el partido de referencia del TFG sin necesidad de calibrar ni generar prototipos desde cero.
+
+**Partido:** UE Banyoles vs Can Gibert, Primera Catalana, 24-01-2026 (resultado: 1–3)
+**Campo:** Banyoles, 98 × 61 m
+
+**Vídeo VEO:** [app.veo.co/matches/20260228-partido-ue-can-gibert-vbf1b002](https://app.veo.co/matches/20260228-partido-ue-can-gibert-vbf1b002/)
+
+> El vídeo panorámico (necesario para el pipeline) solo está disponible durante los 90 días desde la grabación. Pasado ese plazo, el formato estándar sigue accesible.
+
+```bash
+# Descarga el vídeo panorámico (requiere acceso a la cuenta VEO)
+yt-dlp -f panorama-2048p -o "data/videos/banyoles_pan.mp4" \
+    "https://app.veo.co/matches/20260228-partido-ue-can-gibert-vbf1b002/"
+
+# Ejecutar el pipeline con los archivos de ejemplo
+streamlit run veo_app.py
+# En la app: carga H_camA.npy, H_camB.npy, prototypes_day.pkl y prototypes_night.pkl
+# Dimensiones del campo: 98 m × 61 m
+```
+
+---
+
 ## Entrenar el detector YOLO
 
 ### 1. Descargar y preparar el dataset
@@ -481,7 +513,17 @@ python prepare_dataset.py
 
 Este script descarga el dataset, separa las anotaciones de jugadores y balón en dos datasets independientes, convierte las segmentaciones a bounding boxes, y genera los `data.yaml` necesarios para el entrenamiento. Requiere la clave de API de Roboflow (actualmente incluida en el script).
 
-### 2. Lanzar el fine-tuning
+### 2. Entrenamiento inicial desde COCO
+
+Si partes de cero (sin pesos previos entrenados en dominio panorámico), usa `train_yolo.py`. Entrena YOLO26s para balón y YOLO26m para jugadores directamente desde los pesos COCO:
+
+```bash
+python train_yolo.py
+```
+
+Los modelos se guardan en `runs/detect/modelo_ball_v3/` y `runs/detect/modelo_players_v3/`. Usa estos pesos como punto de partida para el fine-tuning del paso siguiente.
+
+### 3. Fine-tuning sobre dataset panorámico VEO
 
 ```bash
 # Entrenar jugadores y balón (ambos en secuencia)
