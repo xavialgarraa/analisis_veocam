@@ -111,13 +111,13 @@ def process_labels(src_label_path, target_class, name=""):
 # ─── PROCESAR DATASET ──────────────────────────────────────────────────────
 def process_dataset():
 
-    print("🔄 Preparando datasets...")
+    print("Preparando datasets...")
 
     create_structure(BALL_PATH)
     create_structure(PLAYERS_PATH)
 
     for split in SPLITS:
-        print(f"\n📂 Procesando {split}...")
+        print(f"\nProcesando {split}...")
 
         img_src = os.path.join(BASE_PATH, split, "images")
         lbl_src = os.path.join(BASE_PATH, split, "labels")
@@ -161,7 +161,7 @@ def process_dataset():
                     f.writelines(player_labels)
 
     # ─── BORRAR CACHE ─────────────────────────────────
-    print("\n🧹 Eliminando cache...")
+    print("\nEliminando cache...")
 
     for path in [BALL_PATH, PLAYERS_PATH]:
         for split in SPLITS:
@@ -169,7 +169,7 @@ def process_dataset():
             if os.path.exists(cache):
                 os.remove(cache)
 
-    print("\n✅ DATASETS GENERADOS")
+    print("\nDATASETS GENERADOS")
 
 
 # ─── CREAR YAML ──────────────────────────────────────
@@ -194,4 +194,4 @@ if __name__ == "__main__":
     create_yaml(BALL_PATH, "ball")
     create_yaml(PLAYERS_PATH, "player")
 
-    print("\n🎉 TODO LISTO")
+    print("\nTODO LISTO")

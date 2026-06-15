@@ -477,7 +477,7 @@ if __name__ == "__main__":
     import sys
     import matplotlib.pyplot as plt
 
-    video = r"C:\Users\xavia\Documents\GitHub\tfg-cv\data\videos\veo_panoramico.mp4"
+    video = sys.argv[2] if len(sys.argv) > 2 else "data/videos/veo_panoramico.mp4"
     sec   = float(sys.argv[1]) if len(sys.argv) > 1 else 40.0
 
     print(f"Cargando frame t={sec}s …")

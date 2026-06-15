@@ -382,9 +382,9 @@ def ask_visible_points(half):
     print(f"  {'N':>3}  {'Etiqueta':<18} Descripción")
     print(f"  {'-'*65}")
     for n, short, desc, (xm, ym) in catalog:
-        tag = " ★" if n in rec else "  "
+        tag = " *" if n in rec else "  "
         print(f"  {n:>3}{tag} {short:<18} {desc}")
-    print(f"\n  ★ = recomendado para cámara {half.upper()}")
+    print(f"\n  * = recomendado para cámara {half.upper()}")
     print(f"  Introduce los números separados por coma (mínimo 4).")
     print(f"  Ejemplo: {','.join(str(x) for x in rec[:8])}\n")
 
@@ -403,10 +403,10 @@ def ask_visible_points(half):
             # Validar
             invalid = [x for x in chosen if x not in catalog_dict]
             if invalid:
-                print(f"  ✗ Números fuera de rango: {invalid}. Vuelve a intentarlo.")
+                print(f"  [!] Números fuera de rango: {invalid}. Vuelve a intentarlo.")
                 continue
             if len(chosen) < 4:
-                print(f"  ✗ Necesitas al menos 4 puntos (tienes {len(chosen)}). Añade más.")
+                print(f"  [!] Necesitas al menos 4 puntos (tienes {len(chosen)}). Añade más.")
                 continue
 
             # Construir sublista
@@ -415,7 +415,7 @@ def ask_visible_points(half):
             break
 
         except ValueError:
-            print("  ✗ Formato inválido. Ejemplo: 1,2,5,6,7")
+            print("  [!] Formato inválido. Ejemplo: 1,2,5,6,7")
 
     print(f"\n  Puntos seleccionados ({len(selected)}):")
     for n, short, _, (xm, ym) in selected:
@@ -561,7 +561,7 @@ def save_homography(drag_pts, selected, half, output_path=None):
     video = np.array(drag_pts, dtype=np.float32)
     H, mask = cv2.findHomography(video, world, cv2.RANSAC, 5.0)
     if H is None:
-        print("  ✗ findHomography falló. Necesitas ≥4 puntos bien distribuidos.")
+        print("  [!] findHomography falló. Necesitas ≥4 puntos bien distribuidos.")
         return False
     inliers = int(mask.sum()) if mask is not None else len(drag_pts)
     path = output_path if output_path else f"data/homography/H_veo_{half}.npy"
@@ -575,7 +575,7 @@ def save_homography(drag_pts, selected, half, output_path=None):
     vp = video.reshape(-1,1,2)
     proj = cv2.perspectiveTransform(vp, H).reshape(-1,2)
     errs = [np.linalg.norm(proj[i] - world[i]) for i in range(len(drag_pts))]
-    print(f"\n  ✓ Guardado: {os.path.abspath(path)}")
+    print(f"\n  OK Guardado: {os.path.abspath(path)}")
     print(f"    Puntos: {len(drag_pts)} | Inliers RANSAC: {inliers}")
     print(f"    Error medio: {np.mean(errs):.3f} m | Máx: {np.max(errs):.3f} m")
     return True
@@ -989,7 +989,7 @@ def main():
         )
 
     if state["dirty"]:
-        print("\n⚠ Hay cambios sin guardar.")
+        print("\n[!] Hay cambios sin guardar.")
 
 if __name__ == "__main__":
     main()

@@ -11,8 +11,6 @@ from pathlib import Path
 from ultralytics import YOLO
 import torch
 
-import sys
-sys.path.insert(0, r'C:\Users\xavia\Documents\GitHub\tfg-cv')
 import pipeline_core as core
 
 try:

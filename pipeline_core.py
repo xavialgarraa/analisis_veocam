@@ -2755,7 +2755,7 @@ def build_ai_prompt(physical_df: pd.DataFrame,
         def _box_str(v):
             try:
                 f_ = float(v)
-                if f_ > 0.8:  return f"{v} jug/frame  ★ amenaza constante"
+                if f_ > 0.8:  return f"{v} jug/frame  amenaza constante"
                 if f_ > 0.4:  return f"{v} jug/frame  presencia moderada"
                 return f"{v} jug/frame  poca presencia en área"
             except: return str(v)
@@ -2763,7 +2763,7 @@ def build_ai_prompt(physical_df: pd.DataFrame,
         def _stab_str(v):
             try:
                 f_ = float(v)
-                if f_ < 3:  return f"{v}m  ★ bloque muy organizado"
+                if f_ < 3:  return f"{v}m  bloque muy organizado"
                 if f_ < 6:  return f"{v}m  organización aceptable"
                 return f"{v}m  línea inestable / desorganizada"
             except: return str(v)
@@ -2779,7 +2779,7 @@ def build_ai_prompt(physical_df: pd.DataFrame,
         def _trans_str(v):
             try:
                 f_ = float(v)
-                if f_ < 8:   return f"{v}s  ★ transición rápida"
+                if f_ < 8:   return f"{v}s  transición rápida"
                 if f_ < 15:  return f"{v}s  transición moderada"
                 return f"{v}s  transición lenta / reactiva"
             except: return str(v)
@@ -2834,8 +2834,8 @@ def build_ai_prompt(physical_df: pd.DataFrame,
     if len(hp_df) or len(ap_df):
         n_h = len(hp_df)
         n_a = len(ap_df)
-        frag_h = "⚠ FRAGMENTADO" if n_h > 25 else "OK"
-        frag_a = "⚠ FRAGMENTADO" if n_a > 25 else "OK"
+        frag_h = "FRAGMENTADO" if n_h > 25 else "OK"
+        frag_a = "FRAGMENTADO" if n_a > 25 else "OK"
         lines += [
             "── FÍSICO — solo orientativo (promedios por TRACK, NO por jugador completo) ──",
             f"  Tracks detectados: {home_team}={n_h} ({frag_h})  |  {away_team}={n_a} ({frag_a})",

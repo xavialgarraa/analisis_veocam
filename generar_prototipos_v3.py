@@ -53,7 +53,7 @@ try:
     from sklearn.cluster import KMeans
     from sklearn.metrics import silhouette_score
 except ImportError:
-    print("⚠️  sklearn no instalado: pip install scikit-learn"); sys.exit(1)
+    print("[AVISO] sklearn no instalado: pip install scikit-learn"); sys.exit(1)
 
 CLASES_VALIDAS = ['player_home', 'player_away', 'gk_home', 'gk_away', 'referee', 'skip']
 CROP_W, CROP_H = 52, 88
@@ -473,7 +473,7 @@ def interactive_pool(pool_rows, pool_name, page_size=PAGE_SIZE):
                     return {cls: sorted_rows}
                 if cls == 'skip':
                     return {}
-                print(f'  ⚠️ Opciones: {CLASES_VALIDAS}')
+                print(f'  [!] Opciones: {CLASES_VALIDAS}')
 
         elif resp == 'd':
             resp_k = input('  k sub-clusters? [2]: ').strip()
@@ -504,7 +504,7 @@ def interactive_pool(pool_rows, pool_name, page_size=PAGE_SIZE):
                         if cls != 'skip':
                             result[cls] = [pool_rows[j] for j in sub_idxs]
                         break
-                    print(f'  ⚠️ Opciones: {CLASES_VALIDAS}')
+                    print(f'  [!] Opciones: {CLASES_VALIDAS}')
                 cv2.destroyAllWindows()
 
             return result
@@ -756,7 +756,7 @@ def plot_illumination_analysis(rows, illum_thresh, has_split,
     ax_t.set_ylim(0, 255)
 
     if has_split:
-        ax_t.set_title('⚡  Cambio de iluminación detectado  →  2 PKLs (día / noche)',
+        ax_t.set_title('Cambio de iluminación detectado  ->  2 PKLs (día / noche)',
                        fontsize=11, color='darkred', fontweight='bold')
     else:
         ax_t.set_title('Iluminación uniforme  →  un único PKL',
@@ -937,7 +937,7 @@ def main():
                             default_home_left=args.home_left)
 
         if len(rows) < 10:
-            print(f'⚠️  Solo {len(rows)} dets. Aumenta --sample_sec o baja --conf')
+            print(f'[!] Solo {len(rows)} dets. Aumenta --sample_sec o baja --conf')
             sys.exit(1)
 
         with open(cache_path, 'wb') as f:
@@ -958,7 +958,7 @@ def main():
         print('\nCalculando posiciones en campo...')
         compute_pos_m(rows, H_a, H_b)
     else:
-        print('\n⚠️  Sin homografias — split posicional deshabilitado '
+        print('\n[!] Sin homografias — split posicional deshabilitado '
               '(usa --H_a / --H_b para habilitarlo).')
 
     has_illum_split, illum_thresh = detect_illumination_split(rows)
@@ -978,7 +978,7 @@ def main():
         print(f'{"="*60}')
 
         if len(subset_rows) < 10:
-            print(f'  ⚠️  Solo {len(subset_rows)} rows — PKL omitido para {label}.')
+            print(f'  [!] Solo {len(subset_rows)} rows — PKL omitido para {label}.')
             return
 
         X    = np.array([r['hue_sig'] for r in subset_rows], dtype=np.float32)
@@ -1000,9 +1000,9 @@ def main():
             try:
                 K = int(resp_k)
                 if K >= 2: break
-                print('  ⚠️ k >= 2')
+                print('  [!] k >= 2')
             except ValueError:
-                print('  ⚠️ Escribe un entero o Enter')
+                print('  [!] Escribe un entero o Enter')
 
         print(f'\n  KMeans k={K}...')
         km     = KMeans(n_clusters=K, random_state=42, n_init=30, max_iter=500)
@@ -1050,7 +1050,7 @@ def main():
                 if cls in ('player_home', 'player_away', 'referee', 'skip'):
                     assignments[ki] = cls
                     break
-                print('  ⚠️ Opciones: player_home, player_away, referee, skip')
+                print('  [!] Opciones: player_home, player_away, referee, skip')
             cv2.destroyAllWindows()
 
         proto_dict  = {}
@@ -1070,7 +1070,7 @@ def main():
                       f'top-{args.n_top} usados  max_dist={proto["max_dist"]:.3f}')
 
         if not any(c in proto_dict for c in ('player_home', 'player_away')):
-            print('\n⚠️  Sin player_home ni player_away — comprueba el labeling.')
+            print('\n[!] Sin player_home ni player_away — comprueba el labeling.')
 
         # FASE 4: Pool de outliers → GKs + árbitro ────────────────────────────
         print(f'\n{"="*60}')
