@@ -2,7 +2,6 @@
 
 Pipeline de visión por computador que extrae métricas tácticas y físicas de partidos de fútbol amateur a partir del vídeo panorámico de la cámara VEO. El sistema cubre toda la cadena: corrección geométrica del vídeo → detección y seguimiento de jugadores → clasificación por equipo → métricas tácticas → dashboard interactivo.
 
-Trabajo de Fin de Grado — Xavier Algarra Pérez, Escuela de Ingeniería, 2026.
 
 ---
 
