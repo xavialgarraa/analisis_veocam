@@ -81,24 +81,34 @@ SAM2 mejora la calidad de los prototipos de color al aislar la silueta del jugad
 ├── prepare_dataset.py        # Descarga y prepara el dataset desde Roboflow
 ├── requirements.txt
 ├── data/
-│   └── example_banyoles/     # Ejemplo listo para usar (partido Banyoles vs Can Gibert)
-│       ├── H_camA.npy        # Homografía cámara izquierda
-│       ├── H_camB.npy        # Homografía cámara derecha
-│       ├── prototypes_day.pkl   # Prototipos de color — condiciones de día
-│       └── prototypes_night.pkl # Prototipos de color — condiciones de noche
+│   └── example_banyoles/          # Ejemplo listo para usar (partido Banyoles vs Can Gibert)
+│       ├── H_camA.npy             # Homografía cámara izquierda (calib_alpha1)
+│       ├── H_camB.npy             # Homografía cámara derecha (calib_alpha1)
+│       ├── calib_camA.jpg         # Frame de referencia usado en la calibración cam A
+│       ├── calib_camB.jpg         # Frame de referencia usado en la calibración cam B
+│       ├── prototypes_day.pkl     # Prototipos de color — condiciones de día
+│       ├── prototypes_night.pkl   # Prototipos de color — condiciones de noche
+│       ├── tracking_sample.csv    # Muestra de tracking (frames 18000–18900, ~30 s)
+│       └── tracking_sample_consolidated.csv  # Misma muestra con Re-ID consolidado
 ├── runs/
 │   └── detect/
-│       └── modelo_ball_v33/weights/best.pt   # modelo de balón incluido (20 MB)
+│       ├── modelo_ball_v33/weights/best.pt             # Modelo de balón (20 MB, incluido)
+│       └── modelo_players_v24_panoramic2/weights/best.pt  # Modelo de jugadores (126 MB, no incluido — ver sección Modelos)
 └── notebooks/
-    ├── veo_banyoles_pipeline.ipynb
-    ├── analisis_formacion.ipynb
-    ├── analisis_ids.ipynb
-    ├── analisis_pkl.ipynb
-    ├── homography_field.ipynb
-    ├── clasificacion_pipeline.ipynb
-    ├── diagnostico_tracking.ipynb
-    ├── detections_viewer.ipynb
-    └── comparacion_trackers.ipynb
+    ├── veo_banyoles_pipeline.ipynb      # Pipeline completo sobre partido de Banyoles
+    ├── veo_tactics_banyoles.ipynb       # Métricas tácticas y físicas desde CSV de tracking
+    ├── veo_tracking_alpha1.ipynb        # Pipeline con preprocesado definitivo alpha=1+crop
+    ├── veo_zoom_alpha.ipynb             # Análisis del preprocesado alpha=1 vs alternativas
+    ├── analisis_formacion.ipynb         # Extracción de formación táctica (KMeans 2D)
+    ├── analisis_ids.ipynb               # Diagnóstico de fragmentación de IDs
+    ├── analisis_pkl.ipynb               # Inspector y tuner de prototipos de color
+    ├── analisis_seam_tracking.ipynb     # Análisis de la costura entre cámaras y overlap
+    ├── homography_field.ipynb           # Verificación visual de la homografía
+    ├── clasificacion_pipeline.ipynb     # Clasificación por equipo paso a paso
+    ├── diagnostico_tracking.ipynb       # Diagnóstico completo de trayectorias y gaps
+    ├── detections_viewer.ipynb          # Visor frame a frame de detecciones
+    ├── comparacion_trackers.ipynb       # ByteTrack vs StrongKalmanTrackerV3
+    └── tracking_improvements.ipynb      # Comparativa KalmanV1 → V2 → V3 (reducción fragmentación)
 ```
 
 ---
@@ -485,6 +495,16 @@ El directorio `data/example_banyoles/` contiene los archivos necesarios para eje
 
 > El vídeo panorámico (necesario para el pipeline) solo está disponible durante los 90 días desde la grabación. Pasado ese plazo, el formato estándar sigue accesible.
 
+**Archivos incluidos:**
+
+| Archivo | Descripción |
+|---------|-------------|
+| `H_camA.npy`, `H_camB.npy` | Homografías calibradas para cámara A (top) y B (bottom) |
+| `prototypes_day.pkl`, `prototypes_night.pkl` | Prototipos de color para condiciones de luz diurna y nocturna |
+| `calib_camA.jpg`, `calib_camB.jpg` | Imágenes de calibración usadas para calcular las homografías |
+| `tracking_sample.csv` | Muestra de tracking (≈10 min) con IDs, posiciones y clases |
+| `tracking_sample_consolidated.csv` | Misma muestra con IDs consolidados (postproceso de fragmentación) |
+
 ```bash
 # Descarga el vídeo panorámico (requiere acceso a la cuenta VEO)
 yt-dlp -f panorama-2048p -o "data/videos/banyoles_pan.mp4" \
@@ -578,14 +598,19 @@ La app busca el modelo de jugadores automáticamente en `runs/detect/modelo_play
 | Notebook | Descripción |
 |----------|-------------|
 | `veo_banyoles_pipeline.ipynb` | Demo completa del pipeline sobre el partido de Banyoles. Reproduce todo el flujo desde la corrección geométrica hasta las métricas tácticas |
+| `veo_tactics_banyoles.ipynb` | Métricas tácticas y físicas (heatmaps, distancias, formación media) calculadas directamente desde el CSV de tracking |
+| `veo_tracking_alpha1.ipynb` | Pipeline completo con preprocesado alpha=1 y recorte de cámara: de vídeo VEO a tracking consolidado paso a paso |
+| `veo_zoom_alpha.ipynb` | Análisis del preprocesado alpha=1 frente a alternativas: impacto en detección y precisión de homografía |
 | `analisis_formacion.ipynb` | Extracción y visualización de la formación táctica (4-3-3, etc.) desde el CSV de tracking. Incluye análisis por tiempo |
 | `analisis_ids.ipynb` | Diagnóstico de fragmentación de IDs: histograma de duración de tracks, detección de fragmentos cortos, ajuste de parámetros del tracker |
 | `analisis_pkl.ipynb` | Inspector y tuner de prototipos de color. Muestra las firmas hue de cada clase, permite comparar PKLs y ajustar umbrales manualmente |
+| `analisis_seam_tracking.ipynb` | Análisis de la zona de costura entre cámara A y B: superposición, drift de coordenadas y calidad del tracking en el overlap |
 | `homography_field.ipynb` | Verificación de la homografía: proyecta el modelo FIFA sobre el frame para comprobar el alineamiento visual |
 | `clasificacion_pipeline.ipynb` | Pipeline de clasificación paso a paso con análisis de márgenes de decisión y tasa de unknowns |
 | `diagnostico_tracking.ipynb` | Diagnóstico completo de trayectorias: gaps por ID, duración media, velocidades, comparación de trackers |
 | `detections_viewer.ipynb` | Visor frame a frame de detecciones con overlay de bounding boxes y heatmaps interactivos |
 | `comparacion_trackers.ipynb` | Comparación cuantitativa entre ByteTrack y StrongKalmanTrackerV3: fragmentación, switches de ID, cobertura temporal |
+| `tracking_improvements.ipynb` | Evolución iterativa del tracker: KalmanV1 → V2 → V3, con métricas comparativas de precisión y estabilidad |
 
 ---
 
